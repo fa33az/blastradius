@@ -44,7 +44,8 @@ export class GraphBuilder {
     for (const sourceFile of sourceFiles) {
       const filePath = path.resolve(sourceFile.getFilePath());
       // Skip node_modules or build outputs if tsconfig loaded them
-      if (filePath.includes(`${path.sep}node_modules${path.sep}`) || filePath.includes(`${path.sep}dist${path.sep}`)) {
+      const lowerPath = filePath.toLowerCase().replace(/\\/g, '/');
+      if (lowerPath.includes('/node_modules/') || lowerPath.includes('/dist/')) {
         continue;
       }
 

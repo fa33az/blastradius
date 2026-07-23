@@ -49,11 +49,14 @@ export class ImportFixer {
         for (const importDecl of importDecls) {
           const resolvedFile = importDecl.getModuleSpecifierSourceFile();
           const specifierVal = importDecl.getModuleSpecifierValue();
+          const resolvedPath = resolvedFile ? path.resolve(resolvedFile.getFilePath()) : null;
 
           const isMatch =
-            (resolvedFile && path.resolve(resolvedFile.getFilePath()) === targetPath) ||
-            specifierVal.includes(targetBaseName) ||
-            specifierVal.endsWith(targetRelPath);
+            (resolvedPath && resolvedPath === targetPath) ||
+            specifierVal === targetRelPath ||
+            specifierVal === `./${targetRelPath}` ||
+            specifierVal.endsWith(`/${targetBaseName}`) ||
+            specifierVal === `./${targetBaseName}`;
 
           if (isMatch) {
             importDecl.remove();
