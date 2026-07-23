@@ -1,13 +1,32 @@
 import chalk from 'chalk';
 import { BlastRadiusReport, CascadeTreeNode } from './types';
+import { MarkdownReporter } from './markdownReporter';
+import { HtmlReporter } from './htmlReporter';
 
 export class Reporter {
   public render(report: BlastRadiusReport): void {
+    // 1. Raw JSON Output
     if (report.options.json) {
       console.log(JSON.stringify(report, null, 2));
       return;
     }
 
+    // 2. Markdown Output
+    if (report.options.markdown) {
+      const mdReporter = new MarkdownReporter();
+      console.log(mdReporter.renderMarkdown(report));
+      return;
+    }
+
+    // 3. HTML Report Generation
+    if (report.options.html) {
+      const htmlFile = typeof report.options.html === 'string' ? report.options.html : 'blastradius-report.html';
+      const htmlReporter = new HtmlReporter();
+      const generatedPath = htmlReporter.generateHtml(report, htmlFile);
+      console.log(chalk.bold.green(`\n✔ Generated interactive HTML report at: ${generatedPath}`));
+    }
+
+    // 4. Standard Terminal Output (Chalk)
     const divider = chalk.gray('--------------------------------------------------');
     console.log(`\n${divider}`);
     console.log(chalk.bold.magenta('🧠 Impact Simulation Report'));

@@ -100,6 +100,10 @@ export interface BlastRadiusOptions {
   verbose?: boolean;
   entry?: string;
   ignoreTests?: boolean;
+  fix?: boolean;
+  interactive?: boolean;
+  markdown?: boolean;
+  html?: string | boolean;
 }
 
 export interface BlastRadiusReport {
@@ -125,4 +129,11 @@ export interface BlastRadiusReport {
   positiveFactors: string[];
   options: BlastRadiusOptions;
   tree?: CascadeTreeNode[];
+}
+
+export interface FixResult {
+  success: boolean;
+  modifiedFiles: string[];
+  removedImportsCount: number;
+  errors: string[];
 }

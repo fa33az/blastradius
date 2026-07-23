@@ -7,7 +7,7 @@
 
 > If I delete this file, what happens?
 
-`blastradius` (executable alias `impact-sim`) is a TypeScript CLI tool designed to simulate the structural impact and runtime risk of deleting any file from a codebase.
+`blastradius` (executable alias `impact-sim`) is a TypeScript CLI tool designed to simulate the structural impact and runtime risk of deleting any file or set of files from a codebase.
 
 Unlike static dependency visualizers, `blastradius` calculates direct import breakage, indirect cascading module dependencies, test coverage risks, and Git history velocity to produce a transparent **Confidence Delete Score (0-100%)**.
 
@@ -16,12 +16,15 @@ Unlike static dependency visualizers, `blastradius` calculates direct import bre
 ## Key Features
 
 - **Static AST Analysis**: Deep module graph scanning using `ts-morph` to track static imports, `import type` specifiers, and dynamic `import()` calls.
+- **Batch Files & Glob Support**: Analyze single files, multiple file lists, or glob expressions (`"src/legacy/*.ts"`).
+- **AST Import Auto-Pruner (`--fix`)**: Automatically removes unused `import` declarations from dependent files using AST manipulation when a target file is deleted.
+- **Interactive Deletion Workflow (`-i, --interactive`)**: Real-time confirmation assistant to safely delete files, auto-prune imports, and run test suites.
+- **GitHub PR Markdown Exporter (`--markdown`)**: Formats impact reports into GitHub Flavored Markdown for automated PR review comments.
+- **Interactive Visual HTML Exporter (`--html`)**: Generates standalone dark-themed HTML report dashboards with dynamic dependency trees.
 - **Cascading Dependency Depth**: Traces full downstream impact chains with maximum cascade depth calculation.
 - **Git History Metrics**: Evaluates repository churn, commit velocity, days since last modification, and unique author metrics via `simple-git`.
 - **Test & Coverage Integration**: Detects active test references and parses Jest/Istanbul JSON coverage reports (`coverage-final.json`).
 - **Runtime Risk Engine**: Evaluates entrypoint linkages, core system layers, configuration references, and legacy folder path discounts.
-- **Transparent Scoring Engine**: Fully configurable weighted score model mapping risk parameters to a 0-100% confidence rating.
-- **Machine-Readable & CI Friendly**: Native `--json` output and optional `--threshold` flags to enforce safe deletion limits in CI pipelines.
 
 ---
 
@@ -52,16 +55,20 @@ npm link
 
 ## Quick Start
 
-Simulate deleting a target file in your repository:
+Simulate deleting a single target file:
 
 ```bash
 blastradius src/utils/legacyParser.ts
 ```
 
-Or using the alias command:
+Simulate deleting multiple files or glob patterns:
 
 ```bash
-impact-sim src/utils/legacyParser.ts
+blastradius src/utils/a.ts src/utils/b.ts
+```
+
+```bash
+blastradius "src/legacy/**/*.ts"
 ```
 
 ---
@@ -70,106 +77,67 @@ impact-sim src/utils/legacyParser.ts
 
 | Flag | Description | Default |
 | --- | --- | --- |
-| `<file>` | Target relative or absolute file path to analyze | Required |
+| `<files...>` | Target file(s) or glob pattern to analyze | Required |
+| `-i, --interactive` | Run interactive deletion assistant workflow | `false` |
+| `--fix` | Auto-prune unused import declarations from dependent files | `false` |
+| `--markdown` | Output report in GitHub Flavored Markdown format | `false` |
+| `--html [filepath]` | Generate interactive visual HTML report file | Disabled |
 | `--json` | Output result as raw JSON | `false` |
 | `--graph` | Print ASCII dependent cascade tree graph | `false` |
 | `--threshold <number>` | Fail with exit code 1 if confidence score < threshold | Disabled |
 | `--verbose` | Print detailed risk factors and positive safety reasoning | `false` |
 | `--entry <file>` | Define custom application entrypoint file path | Auto-detected |
 | `--ignore-tests` | Skip test suite reference and coverage analysis | `false` |
-| `-v, --version` | Output version number | `1.0.0` |
+| `-v, --version` | Output version number | `1.1.0` |
 | `-h, --help` | Display CLI help documentation | |
 
 ---
 
 ## Example Outputs
 
-### Standard Terminal Report
+### Interactive Deletion Assistant (-i)
 
-```
---------------------------------------------------
-Impact Simulation Report
-Target: src/utils/legacyParser.ts
-
-Direct Imports: 0
-Indirect Cascade Depth: 2
-Total Affected Modules: 3
-
-Test References: None
-Last Modified: 482 days ago
-Commit Count: 2
-Contributors: 1
-
-Runtime Risk: Medium
-Bug Probability if Deleted: 32%
-
-Deletion Confidence Score: 78%
-
-Recommendation:
-Safe to delete with caution. Check indirect cascading dependents.
---------------------------------------------------
+```bash
+blastradius src/utils/legacyParser.ts -i
 ```
 
-### High Risk Terminal Warning
-
 ```
---------------------------------------------------
-Impact Simulation Report
-Target: src/core/kernel.ts
+🤖 Interactive Deletion Assistant
+Target File: src/utils/legacyParser.ts
+Deletion Confidence Score: 85%
 
-Direct Imports: 8
-Indirect Cascade Depth: 4
-Total Affected Modules: 24
-
-Test References: src/__tests__/kernel.test.ts
-Last Modified: 2 days ago
-Commit Count: 45
-Contributors: 4
-
-Runtime Risk: High
-Bug Probability if Deleted: 82%
-
-Deletion Confidence Score: 18%
-
-Recommendation:
-DO NOT DELETE. Deeply integrated core dependency; removal will break runtime.
-
- HIGH RISK 
-This file is deeply integrated into core modules.
-Deletion is likely to cause runtime or build failure.
---------------------------------------------------
+? Choose an action for this file: (Use arrow keys)
+> Delete file AND auto-prune unused imports (--fix)
+  Delete file ONLY
+  Cancel action
 ```
 
-### JSON Output Format
+### Markdown Export (--markdown)
 
-```json
-{
-  "target": "src/utils/legacyParser.ts",
-  "directImports": 0,
-  "indirectCascadeDepth": 2,
-  "totalAffectedModules": 3,
-  "testReferences": [],
-  "gitMetrics": {
-    "lastModifiedDaysAgo": 482,
-    "commitCount": 2,
-    "contributors": 1
-  },
-  "coverageMetrics": {
-    "covered": false,
-    "lineCoveragePct": null
-  },
-  "runtimeRisk": "Medium",
-  "bugProbabilityPct": 32,
-  "deletionConfidenceScore": 78,
-  "recommendation": "Safe to delete with caution.",
-  "detailedReasons": [
-    "Indirect dependency cascade depth of 2"
-  ],
-  "positiveFactors": [
-    "Zero direct imports found in codebase",
-    "Inactive file: last modified 482 days ago"
-  ]
-}
+```bash
+blastradius src/scorer.ts --markdown
+```
+
+```markdown
+# Impact Simulation Report: `src/scorer.ts`
+
+> **Tagline**: If I delete this file, what happens?
+
+### Overview Metrics
+| Metric | Value |
+| --- | --- |
+| **Target File** | `src/scorer.ts` |
+| **Direct Imports** | 1 |
+| **Cascade Depth** | 1 |
+| **Total Affected Modules** | 1 |
+| **Test References** | None |
+| **Runtime Risk** | **High** |
+| **Bug Probability** | **55%** |
+| **Delete Confidence Score** | **63%** |
+
+> [!CAUTION]
+> **HIGH RISK DELETION DETECTED**
+> This file is deeply integrated into core modules. Deletion is likely to cause build or runtime failure.
 ```
 
 ---
@@ -193,18 +161,6 @@ Score Interpretation:
 - **60% - 79%**: Safe with caution (verify indirect cascade depth).
 - **40% - 59%**: Moderate risk (refactor dependents prior to removal).
 - **0% - 39%**: High / Critical risk (do not delete without major refactoring).
-
----
-
-## Contributing
-
-Contributions, issues, and feature requests are welcome. Feel free to check the issues page or submit a pull request.
-
-1. Fork the project repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ---
 
