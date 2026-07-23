@@ -1,6 +1,6 @@
 # blastradius
 
-[![npm version](https://img.shields.io/npm/v/blastradius.svg)](https://www.npmjs.com/package/blastradius)
+[![npm version](https://img.shields.io/npm/v/@fa33az/blastradius.svg)](https://www.npmjs.com/package/@fa33az/blastradius)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://www.typescriptlang.org/)
@@ -35,7 +35,7 @@ Unlike static dependency visualizers, `blastradius` calculates direct import bre
 ### Global Installation
 
 ```bash
-npm install -g blastradius
+npm install -g @fa33az/blastradius
 ```
 
 ### Local Development / Linking

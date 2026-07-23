@@ -1,5 +1,5 @@
 {
-  "name": "blastradius",
+  "name": "@fa33az/blastradius",
   "version": "1.0.0",
   "description": "If I delete this file, what happens? Impact cascade simulator and risk estimator.",
   "main": "dist/index.js",
@@ -7,10 +7,21 @@
     "blastradius": "bin/blastradius.js",
     "impact-sim": "bin/blastradius.js"
   },
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
+    "prepublishOnly": "npm run build",
     "start": "node bin/blastradius.js",
     "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fa33az/blastradius.git"
   },
   "keywords": [
     "cli",
@@ -21,7 +32,7 @@
     "refactoring",
     "risk-assessment"
   ],
-  "author": "",
+  "author": "fa33az",
   "license": "MIT",
   "dependencies": {
     "chalk": "^4.1.2",
