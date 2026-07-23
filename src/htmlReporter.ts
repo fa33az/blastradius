@@ -6,6 +6,15 @@ export class HtmlReporter {
   public generateHtml(report: BlastRadiusReport, outputPath: string): string {
     const targetPath = path.resolve(outputPath);
 
+    // Embed logo as base64 if assets/logo.png exists
+    const logoPath = path.resolve(__dirname, '..', 'assets', 'logo.png');
+    let logoHtml = '';
+    if (fs.existsSync(logoPath)) {
+      const logoBuffer = fs.readFileSync(logoPath);
+      const base64Logo = logoBuffer.toString('base64');
+      logoHtml = `<div style="text-align: center; margin-bottom: 20px;"><img src="data:image/png;base64,${base64Logo}" alt="blastradius logo" style="max-width: 450px; width: 100%; height: auto; border-radius: 8px; filter: drop-shadow(0 4px 12px rgba(255,255,255,0.05));" /></div>`;
+    }
+
     const riskColor =
       report.runtimeRisk === 'Critical'
         ? '#ef4444'
@@ -54,13 +63,14 @@ export class HtmlReporter {
     }
     .header {
       border-bottom: 1px solid var(--border);
-      padding-bottom: 20px;
+      padding-bottom: 25px;
       margin-bottom: 30px;
+      text-align: center;
     }
     .title {
       font-size: 28px;
       font-weight: 700;
-      margin: 0 0 10px 0;
+      margin: 10px 0;
       color: #ffffff;
     }
     .subtitle {
@@ -149,7 +159,8 @@ export class HtmlReporter {
 <body>
   <div class="container">
     <div class="header">
-      <h1 class="title">blastradius Impact Simulation Report</h1>
+      ${logoHtml}
+      <h1 class="title">Impact Simulation Report</h1>
       <div class="subtitle">Target Module: <span class="target-badge">${report.target}</span></div>
     </div>
 
@@ -179,8 +190,8 @@ export class HtmlReporter {
 
     <div class="section-title">Risk Factors & Detailed Reasoning</div>
     <ul class="reasons-list">
-      ${report.detailedReasons.map(r => `<li style="color: #f87171;">• ${r}</li>`).join('')}
-      ${report.positiveFactors.map(f => `<li style="color: #4ade80;">• ${f}</li>`).join('')}
+      ${report.detailedReasons.map(r => `<li style="color: #f87171;">- ${r}</li>`).join('')}
+      ${report.positiveFactors.map(f => `<li style="color: #4ade80;">- ${f}</li>`).join('')}
     </ul>
 
     <div class="section-title">Dependent Cascade Tree</div>

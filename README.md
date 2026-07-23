@@ -1,11 +1,17 @@
-# blastradius
+<p align="center">
+  <img src="assets/logo.png" alt="blastradius logo" width="550" />
+</p>
 
-[![npm version](https://img.shields.io/npm/v/@fa33az/blastradius.svg)](https://www.npmjs.com/package/@fa33az/blastradius)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://www.typescriptlang.org/)
+<p align="center">
+  <a href="https://www.npmjs.com/package/@fa33az/blastradius"><img src="https://img.shields.io/npm/v/@fa33az/blastradius.svg" alt="npm version" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a>
+  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg" alt="Node.js Version" /></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.3-blue.svg" alt="TypeScript" /></a>
+</p>
 
-> If I delete this file, what happens?
+<p align="center">
+  <b>If I delete this file, what happens?</b>
+</p>
 
 `blastradius` (executable alias `impact-sim`) is a TypeScript CLI tool designed to simulate the structural impact and runtime risk of deleting any file or set of files from a codebase.
 
@@ -20,7 +26,7 @@ Unlike static dependency visualizers, `blastradius` calculates direct import bre
 - **AST Import Auto-Pruner (`--fix`)**: Automatically removes unused `import` declarations from dependent files using AST manipulation when a target file is deleted.
 - **Interactive Deletion Workflow (`-i, --interactive`)**: Real-time confirmation assistant to safely delete files, auto-prune imports, and run test suites.
 - **GitHub PR Markdown Exporter (`--markdown`)**: Formats impact reports into GitHub Flavored Markdown for automated PR review comments.
-- **Interactive Visual HTML Exporter (`--html`)**: Generates standalone dark-themed HTML report dashboards with dynamic dependency trees.
+- **Interactive Visual HTML Exporter (`--html`)**: Generates standalone dark-themed HTML report dashboards with dynamic dependency trees and logo integration.
 - **Cascading Dependency Depth**: Traces full downstream impact chains with maximum cascade depth calculation.
 - **Git History Metrics**: Evaluates repository churn, commit velocity, days since last modification, and unique author metrics via `simple-git`.
 - **Test & Coverage Integration**: Detects active test references and parses Jest/Istanbul JSON coverage reports (`coverage-final.json`).
@@ -102,7 +108,7 @@ blastradius src/utils/legacyParser.ts -i
 ```
 
 ```
-🤖 Interactive Deletion Assistant
+Interactive Deletion Assistant
 Target File: src/utils/legacyParser.ts
 Deletion Confidence Score: 85%
 
