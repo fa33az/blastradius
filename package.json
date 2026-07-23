@@ -1,0 +1,36 @@
+{
+  "name": "blastradius",
+  "version": "1.0.0",
+  "description": "If I delete this file, what happens? Impact cascade simulator and risk estimator.",
+  "main": "dist/index.js",
+  "bin": {
+    "blastradius": "bin/blastradius.js",
+    "impact-sim": "bin/blastradius.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node bin/blastradius.js",
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "keywords": [
+    "cli",
+    "ast",
+    "ts-morph",
+    "dependency-graph",
+    "impact-analysis",
+    "refactoring",
+    "risk-assessment"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^11.1.0",
+    "simple-git": "^3.22.0",
+    "ts-morph": "^21.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  }
+}
