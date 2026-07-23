@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="assets/logo.png" alt="blastradius logo" width="550" />
-</p>
+<h1 align="center">blastradius</h1>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@fa33az/blastradius"><img src="https://img.shields.io/npm/v/@fa33az/blastradius.svg" alt="npm version" /></a>
@@ -30,7 +28,7 @@ Unlike traditional static dependency graphs, `blastradius` combines static AST a
 - **AST Import Auto-Pruner (`--fix`)**: Automatically removes unused `import` declarations from all dependent files when a target file is deleted.
 - **Interactive Deletion Workflow (`-i, --interactive`)**: Step-by-step CLI prompt to safely preview impact, confirm deletion, auto-prune imports, and run test suites.
 - **GitHub PR Markdown Exporter (`--markdown`)**: Formats impact reports into GitHub Flavored Markdown for automated PR review comments.
-- **Visual HTML Report Exporter (`--html`)**: Generates standalone dark-themed HTML report dashboards with dynamic dependency trees and logo integration.
+- **Visual HTML Report Exporter (`--html`)**: Generates standalone dark-themed HTML report dashboards with dynamic dependency trees.
 - **Git Churn & Velocity Metrics**: Analyzes commit frequency, recency, author counts, and modification history using `simple-git`.
 - **Test Suite & Coverage Integration**: Detects active test references and parses Jest/Istanbul JSON coverage reports (`coverage-final.json`).
 
