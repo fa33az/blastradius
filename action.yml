@@ -1,0 +1,24 @@
+name: 'BlastRadius Impact Guard'
+description: 'Simulate structural impact and runtime risk of deleted/modified files in Pull Requests'
+author: 'fa33az'
+inputs:
+  target:
+    description: 'Target file or glob pattern to analyze (or set to "diff" to analyze PR changes)'
+    required: false
+    default: 'diff'
+  threshold:
+    description: 'Minimum deletion confidence score threshold (0-100). Fails workflow if score is lower.'
+    required: false
+    default: '75'
+  markdown:
+    description: 'Generate GitHub Flavored Markdown report output'
+    required: false
+    default: 'true'
+outputs:
+  report:
+    description: 'Markdown formatted impact simulation report'
+  confidence_score:
+    description: 'Calculated deletion confidence score (0-100)'
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

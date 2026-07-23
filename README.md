@@ -23,177 +23,139 @@ Unlike traditional static dependency graphs, `blastradius` combines static AST a
 
 ## Key Features
 
+- **Git Diff Auto-Analysis (`blastradius diff`)**: Automatically detects modified or deleted files in `git status` or PR branches and calculates cumulative impact.
+- **Project Config File (`.blastradiusrc.json`)**: Repository-level overrides for scoring weights, entrypoints, thresholds, and ignore paths.
+- **Export-Level Impact Analysis (`--export <name>`)**: Analyzes the specific blast radius of deleting a named function, class, or type export within a module.
+- **Live Watch Mode (`-w, --watch`)**: Monitors source files and recalculates impact instantly on save.
+- **Native GitHub Action (`action.yml`)**: Ready-to-use GitHub Action for PR automation and threshold enforcement in CI/CD pipelines.
 - **Static AST Dependency Graph**: Deep scanning powered by `ts-morph` to track static imports, `import type` declarations, re-exports, and dynamic `import()` calls.
 - **Batch Processing & Wildcard Globs**: Analyze individual files, file lists, or wildcard glob patterns (`"src/legacy/**/*.ts"`).
 - **AST Import Auto-Pruner (`--fix`)**: Automatically removes unused `import` declarations from all dependent files when a target file is deleted.
 - **Interactive Deletion Workflow (`-i, --interactive`)**: Step-by-step CLI prompt to safely preview impact, confirm deletion, auto-prune imports, and run test suites.
 - **GitHub PR Markdown Exporter (`--markdown`)**: Formats impact reports into GitHub Flavored Markdown for automated PR review comments.
 - **Visual HTML Report Exporter (`--html`)**: Generates standalone dark-themed HTML report dashboards with dynamic dependency trees.
-- **Git Churn & Velocity Metrics**: Analyzes commit frequency, recency, author counts, and modification history using `simple-git`.
-- **Test Suite & Coverage Integration**: Detects active test references and parses Jest/Istanbul JSON coverage reports (`coverage-final.json`).
 
 ---
 
-## Quick Start
+## Installation
 
-### Installation
-
-#### Global Installation via npm
+### Global Installation via npm
 
 ```bash
 npm install -g @fa33az/blastradius
 ```
 
-#### Local Project Installation
+### Local Project Installation
 
 ```bash
 npm install --save-dev @fa33az/blastradius
 ```
 
-### Basic Command Usage
+---
 
-Run `blastradius` or `impact-sim` on any target file in your repository:
+## Quick Start & Usage
+
+### 1. Analyze Specific Target Files
 
 ```bash
 blastradius src/utils/legacyParser.ts
-```
-
-Analyze multiple files or glob patterns:
-
-```bash
-blastradius src/utils/a.ts src/utils/b.ts
 ```
 
 ```bash
 blastradius "src/legacy/**/*.ts"
 ```
 
+### 2. Auto-Analyze Git Changes (`blastradius diff`)
+
+Analyze all modified/deleted files in your uncommitted Git status:
+
+```bash
+blastradius diff
+```
+
+Analyze changes comparing your branch against `main`:
+
+```bash
+blastradius diff main
+```
+
+### 3. Named Export Impact Analysis (`--export`)
+
+Analyze what happens if you delete a single exported function or symbol:
+
+```bash
+blastradius src/scorer.ts --export DEFAULT_WEIGHTS
+```
+
+### 4. Live Watch Mode (`-w, --watch`)
+
+```bash
+blastradius -w
+```
+
 ---
 
 ## CLI Options & Flags
 
-| Flag | Short | Description | Default |
+| Command / Flag | Short | Description | Default |
 | --- | --- | --- | --- |
 | `<files...>` | | Target file(s) or glob pattern to analyze | Required |
-| `--interactive` | `-i` | Run interactive deletion assistant workflow | `false` |
+| `diff [branch]` | | Subcommand to analyze Git modified/deleted files | |
+| `--export <name>` | | Analyze impact of deleting a specific named export symbol | |
+| `-w, --watch` | | Live watch mode monitoring source files for changes | `false` |
+| `-i, --interactive` | | Run interactive deletion assistant workflow | `false` |
 | `--fix` | | Auto-prune unused import declarations from dependent files | `false` |
 | `--markdown` | | Output report in GitHub Flavored Markdown format | `false` |
 | `--html [filepath]` | | Generate interactive visual HTML report file | Disabled |
 | `--json` | | Output raw machine-readable JSON report | `false` |
 | `--graph` | | Print ASCII dependent cascade tree graph | `false` |
-| `--threshold <number>` | | Exit code 1 if confidence score < threshold (0-100) | Disabled |
+| `--threshold <number>` | | Exit code 1 if confidence score < threshold (0-100) | Config default |
+| `--config <path>` | | Path to custom configuration file | Auto-detected |
 | `--verbose` | | Print detailed risk factors and positive safety reasoning | `false` |
 | `--entry <file>` | | Define custom application entrypoint file path | Auto-detected |
 | `--ignore-tests` | | Skip test suite reference and coverage analysis | `false` |
-| `--version` | `-v` | Output version number | `1.1.0` |
+| `--version` | `-v` | Output version number | `1.2.0` |
 | `--help` | `-h` | Display CLI help documentation | |
 
 ---
 
-## Example Usage & Outputs
+## Repository Configuration (`.blastradiusrc.json`)
 
-### 1. Interactive Deletion Workflow (`-i`)
+Create a `.blastradiusrc.json` in your repository root to configure default settings:
 
-```bash
-blastradius src/utils/legacyParser.ts -i
-```
-
-```
-Interactive Deletion Assistant
-Target File: src/utils/legacyParser.ts
-Deletion Confidence Score: 85%
-
-? Choose an action for this file: (Use arrow keys)
-> Delete file AND auto-prune unused imports (--fix)
-  Delete file ONLY
-  Cancel action
-```
-
-### 2. Standard Terminal Output
-
-```bash
-blastradius src/scorer.ts --verbose --graph
-```
-
-```
---------------------------------------------------
-Impact Simulation Report
-Target: src/scorer.ts
-
-Direct Imports: 1
-Indirect Cascade Depth: 1
-Total Affected Modules: 1
-
-Test References: None
-Last Modified: Unknown
-Commit Count: 0
-Contributors: 0
-
-Runtime Risk: High
-Bug Probability if Deleted: 55%
-
-Deletion Confidence Score: 63%
-
-Recommendation:
-Safe to delete with caution. Check indirect cascading dependents.
-
- [HIGH RISK] 
-This file is deeply integrated into core modules.
-Deletion is likely to cause runtime or build failure.
-
-Detailed Reasoning:
-  - 1 module(s) directly import this file
-  - File is directly imported by an application entrypoint
-
-Safety Factors:
-  - No test suites reference this file directly
-
-Dependent Cascade Tree:
-└── src/index.ts [static]
---------------------------------------------------
-```
-
-### 3. GitHub PR Comment Markdown Export (`--markdown`)
-
-```bash
-blastradius src/scorer.ts --markdown
-```
-
-```markdown
-# Impact Simulation Report: `src/scorer.ts`
-
-> **Tagline**: If I delete this file, what happens?
-
-### Overview Metrics
-| Metric | Value |
-| --- | --- |
-| **Target File** | `src/scorer.ts` |
-| **Direct Imports** | 1 |
-| **Cascade Depth** | 1 |
-| **Total Affected Modules** | 1 |
-| **Test References** | None |
-| **Runtime Risk** | **High** |
-| **Bug Probability** | **55%** |
-| **Delete Confidence Score** | **63%** |
-
-> [!CAUTION]
-> **HIGH RISK DELETION DETECTED**
-> This file is deeply integrated into core modules. Deletion is likely to cause build or runtime failure.
+```json
+{
+  "weights": {
+    "directImpact": 0.35,
+    "cascadeImpact": 0.25,
+    "testPresence": 0.15,
+    "gitActivity": 0.15,
+    "runtimeCriticality": 0.10
+  },
+  "entrypoints": [
+    "src/index.ts",
+    "src/main.ts"
+  ],
+  "threshold": 75,
+  "ignorePaths": [
+    "node_modules/**",
+    "dist/**"
+  ]
+}
 ```
 
 ---
 
 ## GitHub Actions CI Integration
 
-Enforce safe file deletion in Pull Requests using the `--threshold` flag:
+Add `blastradius` to your Pull Request workflow:
 
 ```yaml
 name: BlastRadius Impact Guard
 
 on:
   pull_request:
-    paths:
-      - 'src/**'
+    types: [opened, synchronize]
 
 jobs:
   impact-check:
@@ -204,9 +166,19 @@ jobs:
         with:
           node-version: 18
       - run: npm ci
-      - name: Check Deletion Impact
+      - name: Analyze PR Deletion Impact
         run: |
-          npx @fa33az/blastradius src/utils/legacyParser.ts --threshold 75 --markdown > impact-report.md
+          npx @fa33az/blastradius diff main --threshold 75 --markdown > impact-report.md
+```
+
+Or using native GitHub Action syntax:
+
+```yaml
+      - name: Run BlastRadius Guard
+        uses: fa33az/blastradius@v1.2.0
+        with:
+          target: 'diff'
+          threshold: '75'
 ```
 
 ---
@@ -231,18 +203,6 @@ const weights = {
 - **60% - 79% (Safe with Caution)**: Moderate direct dependencies. Verify indirect downstream cascade depth.
 - **40% - 59% (Moderate Risk)**: Multiple active dependents. Refactor modules before removal.
 - **0% - 39% (High / Critical Risk)**: Deeply integrated into application entrypoints or core layers. Do not delete without architectural refactoring.
-
----
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ---
 

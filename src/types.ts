@@ -93,6 +93,22 @@ export interface ScoreResult {
   };
 }
 
+export interface BlastRadiusConfig {
+  weights?: Partial<ScoringWeights>;
+  entrypoints?: string[];
+  threshold?: number;
+  ignorePaths?: string[];
+}
+
+export interface ExportImpactResult {
+  exportName: string;
+  targetPath: string;
+  targetRelativePath: string;
+  referencingModules: string[];
+  totalReferences: number;
+  isUsedInEntrypoint: boolean;
+}
+
 export interface BlastRadiusOptions {
   json?: boolean;
   graph?: boolean;
@@ -104,6 +120,10 @@ export interface BlastRadiusOptions {
   interactive?: boolean;
   markdown?: boolean;
   html?: string | boolean;
+  export?: string;
+  watch?: boolean;
+  diff?: string | boolean;
+  config?: string;
 }
 
 export interface BlastRadiusReport {
@@ -129,6 +149,7 @@ export interface BlastRadiusReport {
   positiveFactors: string[];
   options: BlastRadiusOptions;
   tree?: CascadeTreeNode[];
+  exportImpact?: ExportImpactResult;
 }
 
 export interface FixResult {

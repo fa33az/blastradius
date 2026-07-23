@@ -1,0 +1,19 @@
+{
+  "weights": {
+    "directImpact": 0.35,
+    "cascadeImpact": 0.25,
+    "testPresence": 0.15,
+    "gitActivity": 0.15,
+    "runtimeCriticality": 0.10
+  },
+  "entrypoints": [
+    "src/index.ts",
+    "src/main.ts"
+  ],
+  "threshold": 70,
+  "ignorePaths": [
+    "node_modules/**",
+    "dist/**",
+    "build/**"
+  ]
+}
