@@ -23,13 +23,13 @@ export class Reporter {
       const htmlFile = typeof report.options.html === 'string' ? report.options.html : 'blastradius-report.html';
       const htmlReporter = new HtmlReporter();
       const generatedPath = htmlReporter.generateHtml(report, htmlFile);
-      console.log(chalk.bold.green(`\n✔ Generated interactive HTML report at: ${generatedPath}`));
+      console.log(chalk.bold.green(`\n[OK] Generated interactive HTML report at: ${generatedPath}`));
     }
 
     // 4. Standard Terminal Output (Chalk)
     const divider = chalk.gray('--------------------------------------------------');
     console.log(`\n${divider}`);
-    console.log(chalk.bold.magenta('🧠 Impact Simulation Report'));
+    console.log(chalk.bold.magenta('Impact Simulation Report'));
     console.log(`${chalk.gray('Target:')} ${chalk.bold.cyan(report.target)}\n`);
 
     console.log(`${chalk.white('Direct Imports:')} ${this.formatCount(report.directImports)}`);
@@ -59,26 +59,26 @@ export class Reporter {
     console.log(chalk.italic(report.recommendation));
 
     if (report.runtimeRisk === 'High' || report.runtimeRisk === 'Critical') {
-      console.log(`\n${chalk.bgRed.bold.white(' ⚠️ HIGH RISK ')}`);
+      console.log(`\n${chalk.bgRed.bold.white(' [HIGH RISK] ')}`);
       console.log(chalk.red('This file is deeply integrated into core modules.'));
       console.log(chalk.red('Deletion is likely to cause runtime or build failure.'));
     }
 
     if (report.options.verbose) {
-      console.log(`\n${chalk.bold.yellow('🔍 Detailed Reasoning:')}`);
+      console.log(`\n${chalk.bold.yellow('Detailed Reasoning:')}`);
       for (const reason of report.detailedReasons) {
-        console.log(chalk.yellow(`  • ${reason}`));
+        console.log(chalk.yellow(`  - ${reason}`));
       }
       if (report.positiveFactors.length > 0) {
-        console.log(chalk.bold.green('\n✨ Safety Factors:'));
+        console.log(chalk.bold.green('\nSafety Factors:'));
         for (const factor of report.positiveFactors) {
-          console.log(chalk.green(`  • ${factor}`));
+          console.log(chalk.green(`  - ${factor}`));
         }
       }
     }
 
     if (report.options.graph && report.tree && report.tree.length > 0) {
-      console.log(`\n${chalk.bold.blue('🌳 Dependent Cascade Tree:')}`);
+      console.log(`\n${chalk.bold.blue('Dependent Cascade Tree:')}`);
       for (const rootNode of report.tree) {
         this.printTree(rootNode, '', true);
       }

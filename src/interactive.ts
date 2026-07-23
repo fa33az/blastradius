@@ -12,7 +12,7 @@ export class InteractiveHandler {
     graph: DependencyGraph,
     cwd: string
   ): Promise<void> {
-    console.log('\n' + chalk.bold.cyan('🤖 Interactive Deletion Assistant'));
+    console.log('\n' + chalk.bold.cyan('Interactive Deletion Assistant'));
     console.log(`Target File: ${chalk.bold.yellow(report.target)}`);
     console.log(`Deletion Confidence Score: ${chalk.bold.green(report.deletionConfidenceScore + '%')}\n`);
 
@@ -50,7 +50,7 @@ export class InteractiveHandler {
       // Perform file removal
       if (fs.existsSync(impact.targetPath)) {
         fs.unlinkSync(impact.targetPath);
-        console.log(chalk.green(`\n✔ Deleted target file: ${report.target}`));
+        console.log(chalk.green(`\n[OK] Deleted target file: ${report.target}`));
       }
 
       // If --fix requested, prune unused imports
@@ -58,9 +58,9 @@ export class InteractiveHandler {
         const fixer = new ImportFixer(cwd, graph);
         const fixRes = fixer.pruneUnusedImports(impact, impact.targetPath);
         if (fixRes.success && fixRes.modifiedFiles.length > 0) {
-          console.log(chalk.green(`✔ Auto-pruned unused imports across ${fixRes.modifiedFiles.length} file(s):`));
+          console.log(chalk.green(`[OK] Auto-pruned unused imports across ${fixRes.modifiedFiles.length} file(s):`));
           for (const file of fixRes.modifiedFiles) {
-            console.log(chalk.gray(`  • ${file}`));
+            console.log(chalk.gray(`  - ${file}`));
           }
         }
       }
@@ -77,9 +77,9 @@ export class InteractiveHandler {
         console.log(chalk.blue('\nRunning npm test...'));
         try {
           execSync('npm test', { cwd, stdio: 'inherit' });
-          console.log(chalk.green('\n✔ Test suite executed cleanly!'));
+          console.log(chalk.green('\n[OK] Test suite executed cleanly!'));
         } catch {
-          console.log(chalk.red('\n❌ Test suite failed after deletion. Check dependent imports.'));
+          console.log(chalk.red('\n[ERROR] Test suite failed after deletion. Check dependent imports.'));
         }
       }
     }

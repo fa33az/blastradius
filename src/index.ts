@@ -53,7 +53,7 @@ program
       const resolvedFiles = Array.from(resolvedFilesSet);
 
       if (resolvedFiles.length === 0) {
-        console.error(chalk.red(`\n❌ Error: No matching target files found.`));
+        console.error(chalk.red(`\nError: No matching target files found.`));
         process.exit(1);
       }
 
@@ -70,7 +70,7 @@ program
       // Process each file in targets list
       for (const targetFile of resolvedFiles) {
         if (!fs.existsSync(targetFile)) {
-          console.error(chalk.red(`\n❌ Error: Target file "${targetFile}" does not exist.`));
+          console.error(chalk.red(`\nError: Target file "${targetFile}" does not exist.`));
           continue;
         }
 
@@ -115,9 +115,9 @@ program
           const fixer = new ImportFixer(cwd, graph);
           const fixRes = fixer.pruneUnusedImports(impact, targetFile);
           if (fixRes.success && fixRes.modifiedFiles.length > 0) {
-            console.log(chalk.green(`✔ Auto-pruned unused imports across ${fixRes.modifiedFiles.length} file(s):`));
+            console.log(chalk.green(`[OK] Auto-pruned unused imports across ${fixRes.modifiedFiles.length} file(s):`));
             for (const file of fixRes.modifiedFiles) {
-              console.log(chalk.gray(`  • ${file}`));
+              console.log(chalk.gray(`  - ${file}`));
             }
           }
         }
@@ -131,13 +131,13 @@ program
         // Threshold check
         if (options.threshold !== undefined && scoreResult.confidenceScore < options.threshold) {
           console.error(
-            chalk.red(`\n⛔ Threshold failure for ${impact.targetRelativePath}: Score ${scoreResult.confidenceScore}% is below required threshold ${options.threshold}%.`)
+            chalk.red(`\nThreshold failure for ${impact.targetRelativePath}: Score ${scoreResult.confidenceScore}% is below required threshold ${options.threshold}%.`)
           );
           process.exit(1);
         }
       }
     } catch (err: any) {
-      console.error(chalk.red(`\n💥 Fatal Error executing blastradius: ${err.message}`));
+      console.error(chalk.red(`\nFatal Error executing blastradius: ${err.message}`));
       process.exit(1);
     }
   });
